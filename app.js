@@ -1,0 +1,80 @@
+const app = document.querySelector('#app');
+
+const features = [
+  ['✦', 'AI Chat', 'Reason, write, and explore with context-aware intelligence.'],
+  ['◈', 'Image Engine', 'Turn a single thought into a visual language.'],
+  ['⌘', 'Code Pilot', 'Ship production-ready code with a pair programmer.'],
+  ['□', 'Documents', 'Ask your files questions and extract what matters.'],
+  ['◒', 'Data Lab', 'See patterns hiding inside your data.']
+];
+const menu = ['Overview', 'AI Chat', 'Image Generator', 'Code Assistant', 'Document Analyzer', 'Projects', 'Templates', 'History', 'Usage', 'Billing', 'Settings'];
+const chatStorageKey = 'nexus-chat-history';
+
+function escapeHtml(value) {
+  return value.replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
+}
+
+function getChatHistory() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(chatStorageKey));
+    return Array.isArray(saved) && saved.length ? saved : null;
+  } catch {
+    return null;
+  }
+}
+
+function landing() {
+  app.innerHTML = `<div class="app-shell landing">
+    <div class="container">
+      <nav class="navbar">
+        <div class="logo"><span class="logo-mark"><span>✦</span></span><span>NEXUS</span></div>
+        <div class="nav-links"><button data-scroll="features">Features</button><button data-scroll="solutions">Solutions</button><button data-scroll="pricing">Pricing</button><button>API</button></div>
+        <div class="nav-actions"><button class="login" data-dashboard>Log in</button><button class="btn btn-primary" data-dashboard>Open workspace ↗</button></div>
+      </nav>
+      <main>
+        <section class="hero">
+          <div><div class="eyebrow">The intelligence layer for ambitious teams</div><h1>Make more.<br><em>Think deeper.</em></h1><p class="hero-copy">NEXUS puts an entire AI studio inside your workflow. One place to ask, create, analyze, and ship work that moves at the speed of thought.</p><div class="hero-buttons"><button class="btn btn-primary" data-dashboard>Start building <span>↗</span></button><button class="btn btn-ghost" data-scroll="demo">Try the AI demo</button></div><div class="hero-meta"><div><strong>12.4k</strong>active creators</div><div><strong>99.9%</strong>platform uptime</div><div><strong>24/7</strong>AI availability</div></div></div>
+          <div class="demo-wrap" id="demo"><div class="demo-orbit"></div><div class="demo-card"><div class="window-bar"><div class="window-dots"><i></i><i></i><i></i></div><span>nexus / ai-chat</span><span>⌘ K</span></div><div class="chat-label">You</div><div class="chat-message">Give me a sharper way to explain our product launch.</div><div class="chat-label">Nexus AI <span style="color:var(--lime)">●</span></div><div class="chat-message ai">Let's make it direct: <strong>"The next chapter of work, already in motion."</strong><br><br>Short, confident, and leaves room for curiosity.</div><div class="typing"><b></b><b></b><b></b></div></div></div>
+        </section>
+        <section class="section" id="features"><div class="section-head"><div><div class="eyebrow">One workspace / infinite output</div><h2>Every tool.<br>In one orbit.</h2></div><p class="section-note">Move from blank page to finished work without losing your train of thought.</p></div><div class="feature-grid">${features.map(f => `<article class="feature"><div class="feature-icon">${f[0]}</div><h3>${f[1]}</h3><p>${f[2]}</p></article>`).join('')}</div></section>
+        <section class="section" id="solutions"><div class="section-head"><div><div class="eyebrow">Built for momentum</div><h2>From first spark<br>to final form.</h2></div><p class="section-note">NEXUS adapts to the way you work, whether you're solo, scaling, or building what's next.</p></div><div class="use-grid"><article class="use-card"><div class="eyebrow">For creators</div><h3>Turn ideas into artifacts.</h3><p>Write the brief. Generate the moodboard. Build the prototype. Keep your flow intact.</p></article><article class="use-card alt"><div class="eyebrow">For teams</div><h3>Make context shared.</h3><p>One source of truth for every ambitious project.</p></article></div></section>
+        <section class="section" id="pricing"><div class="section-head"><div><div class="eyebrow">Plans that scale with you</div><h2>Choose your<br>level of orbit.</h2></div></div><div class="pricing-grid"><article class="price-card"><h3>Free</h3><div class="price">$0 <span>/ forever</span></div><ul><li>100 AI messages / month</li><li>Basic image generation</li><li>1 active workspace</li></ul><button class="btn btn-ghost">Start for free</button></article><article class="price-card featured"><h3>Pro <span class="eyebrow" style="float:right;font-size:9px">Most popular</span></h3><div class="price">$19 <span>/ month</span></div><ul><li>Unlimited conversations</li><li>Advanced models & image engine</li><li>10 workspaces + priority support</li></ul><button class="btn btn-primary" data-dashboard>Get Pro access ↗</button></article><article class="price-card"><h3>Business</h3><div class="price">$49 <span>/ seat / month</span></div><ul><li>Shared team knowledge</li><li>Admin controls & analytics</li><li>SSO and dedicated support</li></ul><button class="btn btn-ghost">Talk to sales</button></article></div></section>
+      </main>
+      <footer class="footer"><span>© 2025 NEXUS SYSTEMS</span><span>Intelligence, amplified. &nbsp; ↗ Documentation &nbsp; ↗ Status</span></footer>
+    </div>
+  </div>`;
+  wireLanding();
+}
+
+function dashboard(active = 'Overview') {
+  app.innerHTML = `<div class="dashboard"><aside class="sidebar"><div class="side-logo logo"><span class="logo-mark"><span>✦</span></span><span class="logo-word">NEXUS</span></div><div class="side-label">Workspace</div><nav class="side-nav">${menu.slice(0, 5).map((item, i) => `<button class="${active === item ? 'active' : ''}" data-menu="${item}">${['⌂','✦','◈','⌘','□'][i]} <span>${item}</span></button>`).join('')}</nav><div class="side-label">Manage</div><nav class="side-nav">${menu.slice(5).map(item => `<button class="${active === item ? 'active' : ''}" data-menu="${item}">◌ <span>${item}</span></button>`).join('')}</nav></aside><div class="dash-main"><header class="dash-top"><div class="crumb">WORKSPACE / <strong>${active.toUpperCase()}</strong></div><div class="dash-top-actions"><button class="command-trigger" id="command-trigger">⌘ K</button><div class="user-chip"><span>Alex Morgan</span><span class="avatar">AM</span></div></div></header><main class="dash-content">${active === 'AI Chat' ? chatView() : overviewView(active)}</main></div><div class="command-palette hide" id="command-palette"><div class="palette-card"><div class="palette-head"><span>Jump to anything</span><button id="close-palette">Esc</button></div><input id="command-search" placeholder="Search workspace..." autocomplete="off" /><div class="palette-results">${menu.map(item => `<button data-command="${item}"><span>${item}</span><small>↵</small></button>`).join('')}</div></div></div></div>`;
+  document.querySelectorAll('[data-menu]').forEach(b => b.addEventListener('click', () => dashboard(b.dataset.menu)));
+  const palette = document.querySelector('#command-palette');
+  const openPalette = () => { palette.classList.remove('hide'); document.querySelector('#command-search').focus(); };
+  document.querySelector('#command-trigger').addEventListener('click', openPalette);
+  document.querySelector('#close-palette').addEventListener('click', () => palette.classList.add('hide'));
+  document.querySelectorAll('[data-command]').forEach(b => b.addEventListener('click', () => dashboard(b.dataset.command)));
+  document.querySelector('#command-search').addEventListener('input', event => {
+    const query = event.target.value.toLowerCase();
+    document.querySelectorAll('[data-command]').forEach(button => button.classList.toggle('hide', !button.dataset.command.toLowerCase().includes(query)));
+  });
+  document.onkeydown = event => {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openPalette(); }
+    if (event.key === 'Escape') palette.classList.add('hide');
+  };
+  const send = document.querySelector('#send-chat');
+  const input = document.querySelector('#chat-input');
+  const newChat = document.querySelector('#new-chat');
+  if (newChat) newChat.addEventListener('click', () => { localStorage.removeItem(chatStorageKey); dashboard('AI Chat'); });
+  if (send) { send.addEventListener('click', () => sendMessage(input)); input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(input); }); }
+}
+
+function overviewView(active) {
+  const isBilling = active === 'Billing';
+  return `<div class="dash-title"><div><div class="eyebrow">${isBilling ? 'Nexus Pro' : 'Monday, September 22, 2025'}</div><h1>${isBilling ? 'Billing & plan' : active}</h1><p>${isBilling ? 'Your workspace subscription and invoices.' : 'Your intelligence layer at a glance.'}</p></div><button class="btn btn-primary">${isBilling ? 'Upgrade plan ↗' : 'New project +'}</button></div>${isBilling ? billingView() : `<div class="stat-grid"><div class="stat-card"><div class="stat-label">Messages used</div><div class="stat-value">8,420</div><div class="trend">↑ 18.4% this month</div></div><div class="stat-card"><div class="stat-label">AI credits</div><div class="stat-value">64%</div><div class="trend">3,840 credits left</div></div><div class="stat-card"><div class="stat-label">Active projects</div><div class="stat-value">12</div><div class="trend">↑ 3 this month</div></div><div class="stat-card"><div class="stat-label">Time saved</div><div class="stat-value">42h</div><div class="trend">↑ 12.6% this month</div></div></div><div class="dash-grid"><section class="dash-panel"><div class="panel-title"><span>ACTIVITY / AI REQUESTS</span><span>LAST 7 DAYS · ↗</span></div><div class="chart">${[42,70,53,84,65,95,77].map(h => `<div class="bar" style="height:${h}%"></div>`).join('')}</div></section><section class="dash-panel"><div class="panel-title"><span>RECENT ACTIVITY</span><span>VIEW ALL</span></div><div class="activity">${[['✦','Brand voice exploration','AI Chat · 4 min ago'],['◈','Summer campaign visuals','Image Generator · 32 min ago'],['□','Q3 strategy.pdf','Document Analyzer · 2 hr ago'],['⌘','Onboarding flow','Code Assistant · 5 hr ago']].map(a => `<div class="activity-row"><div class="activity-icon">${a[0]}</div><div><p>${a[1]}</p><small>${a[2]}</small></div></div>`).join('')}</div></section></div>`}`;
+}
+function billingView() { return `<div class="dash-grid"><section class="dash-panel"><div class="panel-title"><span>CURRENT PLAN</span><span>ACTIVE</span></div><div style="font-size:28px;margin:25px 0 5px">Pro <span style="color:var(--lime)">$19</span><small style="color:var(--muted);font-size:12px"> / month</small></div><p style="color:var(--muted);font-size:12px">Renews October 22, 2025</p><button class="btn btn-ghost" style="margin-top:20px">Manage subscription</button></section><section class="dash-panel"><div class="panel-title"><span>USAGE THIS MONTH</span></div><div class="stat-value">8,420 <small style="color:var(--muted);font-size:12px">/ 20,000 messages</small></div><div style="height:6px;background:#252b3b"><div style="height:100%;width:42%;background:var(--lime)"></div></div><p style="color:var(--muted);font-size:11px;margin-top:15px">42% of monthly allowance used</p></section></div>`; }
+function chatView() { const history = getChatHistory() || [{ role: 'user', text: 'Help me shape a launch narrative for a more thoughtful social app.' }, { role: 'assistant', text: 'A thoughtful social app needs a narrative that feels like an invitation, not a pitch. Try this direction:<br><br><strong>"A quieter place to be online."</strong><br><br>It frames the product around a feeling people already want, while leaving the details open for discovery.' }]; return `<div class="dash-title"><div><div class="eyebrow">Nexus / AI Chat</div><h1>Good morning, Alex.</h1><p>Your conversation history is saved locally.</p></div><button class="btn btn-primary" id="new-chat">+ New chat</button></div><div class="tool-panel"><div class="chat-log">${history.map(message => `<div class="chat-bubble ${message.role === 'user' ? 'user' : ''}">${message.role === 'user' ? escapeHtml(message.text) : message.text}</div>`).join('')}</div><div class="chat-input"><input id="chat-input" placeholder="Ask Nexus anything..." autocomplete="off" /><button class="btn btn-primary" id="send-chat">Send ↗</button></div></div>`; }
+function sendMessage(input) { if (!input.value.trim()) return; const history = getChatHistory() || [{ role: 'user', text: 'Help me shape a launch narrative for a more thoughtful social app.' }, { role: 'assistant', text: 'A thoughtful social app needs a narrative that feels like an invitation, not a pitch. Try this direction:<br><br><strong>"A quieter place to be online."</strong><br><br>It frames the product around a feeling people already want, while leaving the details open for discovery.' }]; const question = input.value.trim(); history.push({ role: 'user', text: question }, { role: 'assistant', text: 'Thinking through that now...' }); localStorage.setItem(chatStorageKey, JSON.stringify(history)); dashboard('AI Chat'); setTimeout(() => { const updated = getChatHistory(); updated[updated.length - 1].text = 'Here is a sharper first pass. I focused on clarity, tone, and the feeling your audience should leave with. Want to push it more poetic or more direct?'; localStorage.setItem(chatStorageKey, JSON.stringify(updated)); if (document.querySelector('.chat-log')) dashboard('AI Chat'); }, 700); }
+function wireLanding() { document.querySelectorAll('[data-dashboard]').forEach(b => b.addEventListener('click', () => dashboard())); document.querySelectorAll('[data-scroll]').forEach(b => b.addEventListener('click', () => document.querySelector('#' + b.dataset.scroll)?.scrollIntoView({ behavior: 'smooth' }))); }
+landing();
