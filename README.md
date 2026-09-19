@@ -13,6 +13,6 @@ Open `index.html` in a browser. No build step or Node.js is required.
 3. Open the `Actions` tab and run `Deploy NEXUS to GitHub Pages` with `Run workflow`, or push another commit.
 4. Open the generated Pages URL from the workflow's `Deploy` step.
 
-The Pages setting must be enabled once by a repository administrator. Until it is enabled, `actions/configure-pages` returns `404 Not Found` and the deployment cannot start.
+The Pages setting must be enabled once by a repository administrator. Until it is enabled, the workflow posts a notice and skips deployment instead of failing on `404 Not Found`.
 
 The current AI chat is a frontend demo. Chat history is stored in the browser's local storage. Real AI, authentication, uploads, billing, and database features require a backend.
